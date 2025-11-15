@@ -11,12 +11,11 @@ TagManager:
   - 
   - Water
   - UI
-  - Claude
+  - Cloud
   - Rain
   - Flower
   - Ground
   - Draggable
-  - 
   - 
   - 
   - 
@@ -44,6 +43,9 @@ TagManager:
     locked: 0
   - name: Rain
     uniqueID: 1855167883
+    locked: 0
+  - name: Cloud
+    uniqueID: 3086282951
     locked: 0
   m_RenderingLayers:
   - Default
