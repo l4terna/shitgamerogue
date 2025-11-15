@@ -11,12 +11,12 @@ TagManager:
   - 
   - Water
   - UI
+  - Cloud
+  - Rain
+  - Flower
+  - Ground
   - Draggable
   - Cloud
-  - 
-  - 
-  - 
-  - 
   - 
   - 
   - 
@@ -40,6 +40,12 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Rain
+    uniqueID: 1855167883
+    locked: 0
+  - name: Cloud
+    uniqueID: 3086282951
     locked: 0
   m_RenderingLayers:
   - Default
