@@ -43,6 +43,6 @@ public class DraggableObject : MonoBehaviour, IDraggable
 
     public void OnDragEnd()
     {
-        Debug.Log("DraggableObject OnDragEnd");
+        // 
     }
 }
