@@ -6,15 +6,12 @@ public class Rain : MonoBehaviour
 
     private void OnParticleCollision(GameObject other)
     {
-        Debug.Log(other.name);
-
-        // Проверяем тег объекта
         if (other.CompareTag("Flower"))
         {
             Flower flower = other.GetComponent<Flower>();
             if (flower != null)
             {
-                flower.AddWater(points); // добавляем воду
+                flower.AddWater(points);
             }
         }
     }
