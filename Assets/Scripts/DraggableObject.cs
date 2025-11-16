@@ -11,7 +11,7 @@ public class DraggableObject : MonoBehaviour, IDraggable
     {
         _cam = Camera.main;
         _parentCollider = transform.parent.GetComponent<Collider2D>();
-        _collider = GetComponent<BoxCollider2D>();
+        _collider = GetComponent<Collider2D>();
     }
 
     public void OnDragStart(Vector2 hitPoint)
