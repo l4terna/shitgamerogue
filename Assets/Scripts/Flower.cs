@@ -16,6 +16,9 @@ public class Flower : MonoBehaviour
     [SerializeField] private float maxGrowMul = 2f;     // максимальный мультипликатор роста
     [SerializeField] private float minGrowMul = 0.1f;   // минимальный мультипликатор роста
 
+    [Header("Stages")]
+    [SerializeField] private GameObject[] stages;
+
     private float growMul = 0f; // 0..maxGrowMul
     private float tickTimer = 0f;
 
@@ -34,6 +37,11 @@ public class Flower : MonoBehaviour
 
     [Header("Leveling")]
     [SerializeField] private int level = 0; // начинается с 0
+
+    void Start()
+    {
+        ApplyLevelStage();  // включаем нужную стадию сразу
+    }
 
     void Update()
     {
@@ -65,8 +73,14 @@ public class Flower : MonoBehaviour
             // проверка на максимум роста
             if (grow >= 100f)
             {
-                grow = 0f; // сброс
-                level += 1; // увеличение уровня
+                grow = 0f;
+                level += 1;
+
+                if (level < stages.Length)
+                    ApplyLevelStage();
+                else
+                    Debug.LogWarning("Level exceeds stages array!");
+
                 Debug.Log($"Flower leveled up! New level: {level}");
             }
 
@@ -91,6 +105,12 @@ public class Flower : MonoBehaviour
         //---------------------------------------
         waterTimer += Time.deltaTime;
         temperatureTimer += Time.deltaTime;
+    }
+
+    private void ApplyLevelStage()
+    {
+        for (int i = 0; i < stages.Length; i++)
+            stages[i].SetActive(i == level); // включён только текущий уровень
     }
 
     // ----------------------------
