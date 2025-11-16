@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04be8e03aef21544e8809c327f0825cd, type: 3}
+  m_Name: LevelsData
+  m_EditorClassIdentifier: Assembly-CSharp::LevelsData
+  levels:
+  - defFlowerWater: 5
+    defFlowerTemp: 5
+    score: 1
+    windRepulcion: 0
+    windDuration: 0
+    minDurNoWind: 0
+    maxDurNoWind: 0
+    rainWaterPoints: 0.5
+    snopwWaterPoints: 0
+    snowTempPoints: 0
+    snowDuration: 0
+    minDurNoSnow: 0
+    maxDurNoSnow: 0
+    sunRaysCount: 30
+    moonRaysCount: 30
+    sunRayTempPoints: 0.5
+    moonRayTempPoints: 0.3
+  - defFlowerWater: 5
+    defFlowerTemp: 5
+    score: 1
+    windRepulcion: 0
+    windDuration: 0
+    minDurNoWind: 0
+    maxDurNoWind: 0
+    rainWaterPoints: 0.5
+    snopwWaterPoints: 0.3
+    snowTempPoints: -0.5
+    snowDuration: 3
+    minDurNoSnow: 10
+    maxDurNoSnow: 15
+    sunRaysCount: 60
+    moonRaysCount: 60
+    sunRayTempPoints: 0.3
+    moonRayTempPoints: 0.1
+  - defFlowerWater: 5
+    defFlowerTemp: 5
+    score: 2
+    windRepulcion: 1
+    windDuration: 3
+    minDurNoWind: 5
+    maxDurNoWind: 15
+    rainWaterPoints: 0.5
+    snopwWaterPoints: 0.2
+    snowTempPoints: -0.7
+    snowDuration: 3
+    minDurNoSnow: 10
+    maxDurNoSnow: 15
+    sunRaysCount: 60
+    moonRaysCount: 60
+    sunRayTempPoints: 0.5
+    moonRayTempPoints: 0.2
+  - defFlowerWater: 5
+    defFlowerTemp: 5
+    score: 2
+    windRepulcion: 2
+    windDuration: 5
+    minDurNoWind: 7
+    maxDurNoWind: 15
+    rainWaterPoints: 0.5
+    snopwWaterPoints: 0.2
+    snowTempPoints: -0.8
+    snowDuration: 5
+    minDurNoSnow: 7
+    maxDurNoSnow: 15
+    sunRaysCount: 60
+    moonRaysCount: 60
+    sunRayTempPoints: 0.5
+    moonRayTempPoints: 0.3
+  - defFlowerWater: 5
+    defFlowerTemp: 5
+    score: 2
+    windRepulcion: 2
+    windDuration: 5
+    minDurNoWind: 5
+    maxDurNoWind: 10
+    rainWaterPoints: 0.5
+    snopwWaterPoints: 0.3
+    snowTempPoints: -0.9
+    snowDuration: 5
+    minDurNoSnow: 5
+    maxDurNoSnow: 10
+    sunRaysCount: 100
+    moonRaysCount: 100
+    sunRayTempPoints: 0.3
+    moonRayTempPoints: 0.1

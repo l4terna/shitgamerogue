@@ -8,14 +8,12 @@ public class WeatherSwitcher : MonoBehaviour
     [SerializeField] private ParticleSystem snowfall;
     [SerializeField] private ParticleSystem rain;
 
-    [SerializeField] private float snowfallDuration = 10f;
+    [SerializeField] public float snowfallDuration = 10f;
     
-    [SerializeField] private float minDurationWithNoSnow = 30f;
-    [SerializeField] private float maxDurationWithNoSnow = 120f;
+    [SerializeField] public float minDurationWithNoSnow = 30f;
+    [SerializeField] public float maxDurationWithNoSnow = 120f;
     
     private SpriteRenderer _spriteRenderer;
-
-    private int _originalLayer; 
         
     public WeatherType CurrentWeather
     {
@@ -38,18 +36,6 @@ public class WeatherSwitcher : MonoBehaviour
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _originalLayer = gameObject.layer;
-    }
-
-    void Start()
-    {
-        rain.gameObject.SetActive(true);
-        snowfall.gameObject.SetActive(true);
-
-        rain.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        snowfall.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        
-        StartCoroutine(WeatherSwitch());
     }
 
     private IEnumerator WeatherSwitch()
@@ -61,7 +47,10 @@ public class WeatherSwitcher : MonoBehaviour
                 rain.Stop(true, ParticleSystemStopBehavior.StopEmitting);
                 snowfall.Play();
                 SetSnowColor(true);
-                
+
+                AudioManager.Instance.StopMusic("rain");
+                AudioManager.Instance.PlayMusic("snow");
+
                 yield return new WaitForSeconds(snowfallDuration);
             }
             else
@@ -69,7 +58,11 @@ public class WeatherSwitcher : MonoBehaviour
                 snowfall.Stop(true, ParticleSystemStopBehavior.StopEmitting);
                 rain.Play();
                 SetSnowColor(false);
-                
+
+
+                AudioManager.Instance.StopMusic("snow");
+                AudioManager.Instance.PlayMusic("rain");
+
                 float randomDelay = Random.Range(minDurationWithNoSnow, maxDurationWithNoSnow);
                 Debug.Log("Rain delay: " + randomDelay);
                 
@@ -88,15 +81,29 @@ public class WeatherSwitcher : MonoBehaviour
         );
         else _spriteRenderer.color = Color.white;
     }
-    
 
-    public void ForceSnowNow()
+
+    public void StartSnow()
     {
-        StopAllCoroutines();
-        
-        rain.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-        snowfall.Play();
-        
+        // Если корутина уже запущена, не запускаем повторно
+        StopSnow(); // безопасно остановим текущую погоду
         StartCoroutine(WeatherSwitch());
+    }
+
+    public void StopSnow()
+    {
+        // Останавливаем снег
+        if (snowfall != null && snowfall.isPlaying)
+            snowfall.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+
+        // Включаем дождь
+        if (rain != null && !rain.isPlaying)
+            rain.Play();
+
+        // Меняем цвет снега обратно
+        SetSnowColor(false);
+
+        // Останавливаем корутину безопасно
+        StopAllCoroutines(); // если только эта корутина больше не нужна
     }
 }

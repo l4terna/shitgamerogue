@@ -58,5 +58,8 @@ TagManager:
   - name: Main Menu
     uniqueID: 1410120341
     locked: 0
+  - name: Tutorial
+    uniqueID: 3997233617
+    locked: 0
   m_RenderingLayers:
   - Default

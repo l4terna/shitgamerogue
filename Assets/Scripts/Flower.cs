@@ -1,20 +1,24 @@
-using UnityEngine;
+п»їusing UnityEngine;
 
 public class Flower : MonoBehaviour
 {
     [Header("Environment (0..10)")]
-    [SerializeField] private float water = 5f;
-    [SerializeField] private float temperature = 5f;
+    [SerializeField] public float water = 5f;
+    [SerializeField] public float temperature = 5f;
 
     [Header("Energy System")]
     private float energy = 0f; // 0..5
 
     [Header("Growth")]
     [SerializeField] private float grow = 0f;           // 0..100
-    [SerializeField] private float score = 1f;          // прирост за тик
-    [SerializeField] private float secondsPerTick = 1f; // частота роста
-    [SerializeField] private float maxGrowMul = 2f;     // максимальный мультипликатор роста
-    [SerializeField] private float minGrowMul = 0.1f;   // минимальный мультипликатор роста
+    [SerializeField] public float score = 1f;          // РїСЂРёСЂРѕСЃС‚ Р·Р° С‚РёРє
+    [SerializeField] private float secondsPerTick = 1f; // С‡Р°СЃС‚РѕС‚Р° СЂРѕСЃС‚Р°
+    [SerializeField] private float maxGrowMul = 2f;     // РјР°РєСЃРёРјР°Р»СЊРЅС‹Р№ РјСѓР»СЊС‚РёРїР»РёРєР°С‚РѕСЂ СЂРѕСЃС‚Р°
+    [SerializeField] private float minGrowMul = 0.1f;   // РјРёРЅРёРјР°Р»СЊРЅС‹Р№ РјСѓР»СЊС‚РёРїР»РёРєР°С‚РѕСЂ СЂРѕСЃС‚Р°
+
+    [Header("Negative Growth")]
+    [SerializeField] private float negativeGrowMax = 2f; // РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ СѓРјРµРЅСЊС€РµРЅРёРµ
+    [SerializeField] private float negativeGrowEdge = 2f; // Р·РѕРЅР° Сѓ РєСЂР°СЏ С€РєР°Р»С‹, РіРґРµ РЅР°С‡РёРЅР°РµС‚СЃСЏ СѓРјРµРЅСЊС€РµРЅРёРµ
 
     [Header("Stages")]
     [SerializeField] private GameObject[] stages;
@@ -30,39 +34,39 @@ public class Flower : MonoBehaviour
     private float temperatureTimer = 0f;
 
     [Header("Decrease over time")]
-    [SerializeField] private float waterDecreaseRate = 0.5f;        // сколько воды теряется за тик
-    [SerializeField] private float temperatureDecreaseRate = 0.5f;  // сколько температуры теряется за тик
-    [SerializeField] private float waterDecreaseCooldown = 5f;      // время без воды перед уменьшением
-    [SerializeField] private float temperatureDecreaseCooldown = 5f;// время без тепла перед уменьшением
+    [SerializeField] private float waterDecreaseRate = 0.5f;        // СЃРєРѕР»СЊРєРѕ РІРѕРґС‹ С‚РµСЂСЏРµС‚СЃСЏ Р·Р° С‚РёРє
+    [SerializeField] private float temperatureDecreaseRate = 0.5f;  // СЃРєРѕР»СЊРєРѕ С‚РµРјРїРµСЂР°С‚СѓСЂС‹ С‚РµСЂСЏРµС‚СЃСЏ Р·Р° С‚РёРє
+    [SerializeField] private float waterDecreaseCooldown = 5f;      // РІСЂРµРјСЏ Р±РµР· РІРѕРґС‹ РїРµСЂРµРґ СѓРјРµРЅСЊС€РµРЅРёРµРј
+    [SerializeField] private float temperatureDecreaseCooldown = 5f;// РІСЂРµРјСЏ Р±РµР· С‚РµРїР»Р° РїРµСЂРµРґ СѓРјРµРЅСЊС€РµРЅРёРµРј
 
     [Header("Leveling")]
-    [SerializeField] private int level = 0; // начинается с 0
+    [SerializeField] private int level = 0; // РЅР°С‡РёРЅР°РµС‚СЃСЏ СЃ 0
 
     void Start()
     {
-        ApplyLevelStage();  // включаем нужную стадию сразу
+        ApplyLevelStage();  // РІРєР»СЋС‡Р°РµРј РЅСѓР¶РЅСѓСЋ СЃС‚Р°РґРёСЋ СЃСЂР°Р·Сѓ
     }
 
     void Update()
     {
         //---------------------------------------
-        // 1. Рассчёт состояния среды (0..1)
+        // 1. Р Р°СЃСЃС‡С‘С‚ СЃРѕСЃС‚РѕСЏРЅРёСЏ СЃСЂРµРґС‹ (0..1)
         //---------------------------------------
         float waterScore = 1f - Mathf.Abs(water - 5f) / 5f;
         float tempScore = 1f - Mathf.Abs(temperature - 5f) / 5f;
 
         //---------------------------------------
-        // 2. Энергия с плавной кривой
+        // 2. Р­РЅРµСЂРіРёСЏ СЃ РїР»Р°РІРЅРѕР№ РєСЂРёРІРѕР№
         //---------------------------------------
         energy = 5f * Mathf.Pow((waterScore + tempScore) / 2f, 1.2f);
 
         //---------------------------------------
-        // 3. Мультипликатор роста
+        // 3. РњСѓР»СЊС‚РёРїР»РёРєР°С‚РѕСЂ СЂРѕСЃС‚Р°
         //---------------------------------------
         growMul = Mathf.Max(minGrowMul, (energy / 5f) * maxGrowMul);
 
         //---------------------------------------
-        // 4. Рост по тиковой системе
+        // 4. Р РѕСЃС‚ РїРѕ С‚РёРєРѕРІРѕР№ СЃРёСЃС‚РµРјРµ
         //---------------------------------------
         tickTimer += Time.deltaTime;
         if (tickTimer >= secondsPerTick)
@@ -70,7 +74,52 @@ public class Flower : MonoBehaviour
             tickTimer -= secondsPerTick;
             grow += score * growMul;
 
-            // проверка на максимум роста
+            // ----------------------------------------------------
+            //  NEGATIVE GROW WHEN WATER/TEMP NEAR 0 OR 10
+            // ----------------------------------------------------
+            float negative = 0f;
+
+            // СЂР°СЃСЃС‚РѕСЏРЅРёРµ РґРѕ "РєСЂР°СЏ" РґР»СЏ РІРѕРґС‹ Рё С‚РµРјРїРµСЂР°С‚СѓСЂС‹
+            float waterEdgeDist = Mathf.Min(water, 10f - water);
+            float tempEdgeDist = Mathf.Min(temperature, 10f - temperature);
+
+            // РІС‹С‡РёСЃР»СЏРµРј РґРѕР»СЋ Р±Р»РёР·РѕСЃС‚Рё Рє РєСЂР°СЋ
+            float waterDanger = Mathf.Clamp01((negativeGrowEdge - waterEdgeDist) / negativeGrowEdge);
+            float tempDanger = Mathf.Clamp01((negativeGrowEdge - tempEdgeDist) / negativeGrowEdge);
+
+            // РІС‹Р±РёСЂР°РµРј СЃРёР»СЊРЅРµР№С€РёР№ С€С‚СЂР°С„
+            float danger = Mathf.Max(waterDanger, tempDanger);
+
+            // danger = 0 в†’ РЅРѕСЂРјР°
+            // danger = 1 в†’ С‚РѕС‡РЅРѕ РЅР° 0 РёР»Рё 10
+            negative = negativeGrowMax * danger;
+
+            if (negative > 0f)
+            {
+                grow -= negative;
+
+                // РµСЃР»Рё СЂРѕСЃС‚ СѓРїР°Р» РЅРёР¶Рµ РЅСѓР»СЏ вЂ” РїРѕРЅРёР¶Р°РµРј СѓСЂРѕРІРµРЅСЊ
+                if (grow < 0f)
+                {
+                    if (level > 0)
+                    {
+                        level -= 1;
+                        ApplyLevelStage();
+                        Debug.Log($"Flower level DOWN! New level: {level}");
+                        AudioManager.Instance.PlayEffect("down");
+                        grow = 50f;
+                    }
+                    else
+                    {
+                        OnMinLevelReached(); // Р·Р°РіР»СѓС€РєР°
+                    }
+
+
+                }
+            }
+
+
+            // РїСЂРѕРІРµСЂРєР° РЅР° РјР°РєСЃРёРјСѓРј СЂРѕСЃС‚Р°
             if (grow >= 100f)
             {
                 grow = 0f;
@@ -79,15 +128,22 @@ public class Flower : MonoBehaviour
                 if (level < stages.Length)
                     ApplyLevelStage();
                 else
-                    Debug.LogWarning("Level exceeds stages array!");
+                {
+                    GameManager.Instance.WinGame();
+                    return;
+                }
+
+                GameManager.Instance.StartLevel(level);
 
                 Debug.Log($"Flower leveled up! New level: {level}");
+
+                AudioManager.Instance.PlayEffect("levelup");
             }
 
             grow = Mathf.Clamp(grow, 0f, 100f);
 
             // -----------------------------
-            // Уменьшение ресурсов, если нет добавления
+            // РЈРјРµРЅСЊС€РµРЅРёРµ СЂРµСЃСѓСЂСЃРѕРІ, РµСЃР»Рё РЅРµС‚ РґРѕР±Р°РІР»РµРЅРёСЏ
             // -----------------------------
             if (waterTimer >= waterDecreaseCooldown)
             {
@@ -101,27 +157,65 @@ public class Flower : MonoBehaviour
         }
 
         //---------------------------------------
-        // 5. Таймеры cooldown
+        // 5. РўР°Р№РјРµСЂС‹ cooldown
         //---------------------------------------
         waterTimer += Time.deltaTime;
         temperatureTimer += Time.deltaTime;
+    }
+    private void OnMinLevelReached()
+    {
+        GameManager.Instance.EndGame();
     }
 
     private void ApplyLevelStage()
     {
         for (int i = 0; i < stages.Length; i++)
-            stages[i].SetActive(i == level); // включён только текущий уровень
+            stages[i].SetActive(i == level); // РІРєР»СЋС‡С‘РЅ С‚РѕР»СЊРєРѕ С‚РµРєСѓС‰РёР№ СѓСЂРѕРІРµРЅСЊ
+    }
+
+    public void ResetLevel()
+    {
+        if (GameManager.Instance == null || GameManager.Instance.GetCurrentLevelConfig() == null)
+        {
+            Debug.LogWarning("Cannot reset level: CurrentLevelConfig is null!");
+            return;
+        }
+
+        LevelConfig config = GameManager.Instance.GetCurrentLevelConfig();
+
+        // РЎР±СЂРѕСЃ СЂРѕСЃС‚Р°
+        grow = 0f;
+        growMul = minGrowMul;
+
+        // РЎР±СЂРѕСЃ СЂРµСЃСѓСЂСЃРѕРІ РЅР° Р·РЅР°С‡РµРЅРёСЏ РёР· LevelConfig
+        water = 5;
+        temperature = 5;
+        energy = 0f;
+
+        // РЎР±СЂРѕСЃ С‚Р°Р№РјРµСЂРѕРІ
+        tickTimer = 0f;
+        waterTimer = 0f;
+        temperatureTimer = 0f;
+
+        // РЎР±СЂРѕСЃ СѓСЂРѕРІРЅСЏ
+        level = 0;
+
+        // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РїСЂР°РІРёР»СЊРЅС‹Р№ СЃРїСЂР°Р№С‚/СЃС‚Р°РґРёСЋ
+        ApplyLevelStage();
+
+        Debug.Log($"Flower reset to level 0 with water={water}, temperature={temperature}");
     }
 
     // ----------------------------
-    // Методы для внешнего контроля с cooldown
+    // РњРµС‚РѕРґС‹ РґР»СЏ РІРЅРµС€РЅРµРіРѕ РєРѕРЅС‚СЂРѕР»СЏ СЃ cooldown
     // ----------------------------
+
     public void AddWater(float amount)
     {
         if (waterTimer >= waterCooldown)
         {
             water = Mathf.Clamp(water + amount, 0f, 10f);
-            waterTimer = 0f; // сброс таймера, т.к. вода была добавлена
+            waterTimer = 0f; // СЃР±СЂРѕСЃ С‚Р°Р№РјРµСЂР°, С‚.Рє. РІРѕРґР° Р±С‹Р»Р° РґРѕР±Р°РІР»РµРЅР°
         }
     }
 
@@ -130,7 +224,7 @@ public class Flower : MonoBehaviour
         if (temperatureTimer >= temperatureCooldown)
         {
             temperature = Mathf.Clamp(temperature + amount, 0f, 10f);
-            temperatureTimer = 0f; // сброс таймера, т.к. температура была добавлена
+            temperatureTimer = 0f; // СЃР±СЂРѕСЃ С‚Р°Р№РјРµСЂР°, С‚.Рє. С‚РµРјРїРµСЂР°С‚СѓСЂР° Р±С‹Р»Р° РґРѕР±Р°РІР»РµРЅР°
         }
     }
 
@@ -155,6 +249,7 @@ public class Flower : MonoBehaviour
     // ----------------------------
     // Getters
     // ----------------------------
+
     public float GetWater() => water;
     public float GetTemperature() => temperature;
     public float GetEnergy() => energy;

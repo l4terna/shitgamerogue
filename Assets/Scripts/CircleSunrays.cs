@@ -5,25 +5,25 @@ using UnityEngine.TextCore.Text;
 [RequireComponent(typeof(LineRenderer))]
 public class CircleSunrays : MonoBehaviour
 {
-    [SerializeField] private float temperatureIncreasePoints = 1f;
-        
-    [SerializeField] private int raysCount = 36;
+    [SerializeField] public float temperatureIncreasePoints = 1f;
+
+    [SerializeField] public int raysCount = 36;
     [SerializeField] private float maxDistance = 10f;
     [SerializeField] private LayerMask obstacleMask;
     [SerializeField] private LayerMask flowerMask;
-    
-    [SerializeField] private float fullStartWidth = 0.6f;   
-    [SerializeField] private float fullEndWidth = 0.3f;   
-    
+
+    [SerializeField] private float fullStartWidth = 0.6f;
+    [SerializeField] private float fullEndWidth = 0.3f;
+
     [ColorUsage(true, true)]
     [SerializeField] private Color rayColor = new Color(1f, 0.92156863f, 0.015686275f, 0.4f);
 
     private LineRenderer[] _rays;
     private LineRenderer _template;
-    
+
     public LineRenderer[] Rays => _rays;
 
-    private void Awake()
+    void Awake()
     {
         _template = GetComponent<LineRenderer>();
 
@@ -33,32 +33,50 @@ public class CircleSunrays : MonoBehaviour
         _template.endWidth = fullEndWidth;
         _template.positionCount = 2;
 
+        RebuildRays();
+
+        _template.enabled = false;
+    }
+
+    public void RebuildRays()
+    {
+        if (_rays != null)
+        {
+            for (int i = 0; i < _rays.Length; i++)
+            {
+                if (_rays[i] != null)
+                    Destroy(_rays[i].gameObject);
+            }
+        }
+
         _rays = new LineRenderer[raysCount];
 
         for (int i = 0; i < raysCount; i++)
         {
-            GameObject rayObj = new GameObject($"SunRay_{i}");
+            GameObject rayObj = new GameObject($"SunRay{i}");
             rayObj.transform.SetParent(transform, false);
 
             LineRenderer lr = rayObj.AddComponent<LineRenderer>();
 
             lr.useWorldSpace = _template.useWorldSpace;
             lr.loop = _template.loop;
-            lr.material = _template.material;
-            lr.textureMode = _template.textureMode;
-            lr.numCapVertices = _template.numCapVertices;
-            lr.numCornerVertices = _template.numCornerVertices;
-            lr.endColor =  _template.endColor;
-            lr.startColor =  _template.startColor;
-            lr.positionCount = 2;
-            lr.sortingOrder = _template.sortingOrder;
             lr.material = new Material(Shader.Find("Sprites/Default"));
             lr.material.color = rayColor;
 
+            lr.textureMode = _template.textureMode;
+            lr.numCapVertices = _template.numCapVertices;
+            lr.numCornerVertices = _template.numCornerVertices;
+            lr.startColor = _template.startColor;
+            lr.endColor = _template.endColor;
+
+            lr.startWidth = fullStartWidth;
+            lr.endWidth = fullEndWidth;
+
+            lr.positionCount = 2;
+            lr.sortingOrder = _template.sortingOrder;
+
             _rays[i] = lr;
         }
-
-        _template.enabled = false;
     }
 
     private void Update()
@@ -81,10 +99,10 @@ public class CircleSunrays : MonoBehaviour
             if (hit.collider && hit.collider.gameObject.CompareTag("Flower"))
             {
                 Flower flower = hit.collider.gameObject.GetComponentInParent<Flower>();
-                
+
                 flower?.AddTemperature(temperatureIncreasePoints);
-            }   
-            
+            }
+
             Vector3 end = hit.collider
                 ? (Vector3)hit.point
                 : (Vector3)(origin + dir * maxDistance);
@@ -101,5 +119,15 @@ public class CircleSunrays : MonoBehaviour
             lr.endWidth = Mathf.Lerp(fullStartWidth, fullEndWidth, t);
         }
     }
-    
+
+    public void SetRaysCount(int newCount)
+    {
+        newCount = Mathf.Max(1, newCount);
+        if (newCount == raysCount)
+            return;
+
+        raysCount = newCount;
+        RebuildRays();
+    }
+
 }
