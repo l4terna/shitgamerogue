@@ -45,8 +45,17 @@ TagManager:
   - name: Rain
     uniqueID: 1855167883
     locked: 0
+  - name: Snowfall
+    uniqueID: 3813658225
+    locked: 0
   - name: Cloud
     uniqueID: 3086282951
+    locked: 0
+  - name: Main Menu
+    uniqueID: 1410120341
+    locked: 0
+  - name: Flower
+    uniqueID: 3842699073
     locked: 0
   m_RenderingLayers:
   - Default
