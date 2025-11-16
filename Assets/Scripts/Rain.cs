@@ -8,12 +8,15 @@ public class Rain : MonoBehaviour
     {
         Debug.Log(other.name);
 
-        // Пытаемся найти Flower в родителях объекта
-        Flower flower = other.GetComponentInParent<Flower>();
-
-        if (flower != null)
+        // Проверяем тег объекта
+        if (other.CompareTag("Flower"))
         {
-            flower.AddWater(points); // добавляем воду
+            Flower flower = other.GetComponent<Flower>();
+            if (flower != null)
+            {
+                flower.AddWater(points); // добавляем воду
+            }
         }
     }
+
 }

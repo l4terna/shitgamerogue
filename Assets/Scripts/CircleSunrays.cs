@@ -1,12 +1,16 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.TextCore.Text;
 
 [RequireComponent(typeof(LineRenderer))]
 public class CircleSunrays : MonoBehaviour
 {
+    [SerializeField] private float temperatureIncreasePoints = 1f;
+        
     [SerializeField] private int raysCount = 36;
     [SerializeField] private float maxDistance = 10f;
     [SerializeField] private LayerMask obstacleMask;
+    [SerializeField] private LayerMask flowerMask;
     
     [SerializeField] private float fullStartWidth = 0.6f;   
     [SerializeField] private float fullEndWidth = 0.3f;   
@@ -68,9 +72,19 @@ public class CircleSunrays : MonoBehaviour
 
             Vector2 dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
 
-            RaycastHit2D hit = Physics2D.Raycast(origin, dir, maxDistance, obstacleMask);
+
+            int mask = obstacleMask | flowerMask;
+            RaycastHit2D hit = Physics2D.Raycast(origin, dir, maxDistance, mask);
 
             Vector3 start = origin;
+
+            if (hit.collider && hit.collider.gameObject.CompareTag("Flower"))
+            {
+                Flower flower = hit.collider.gameObject.GetComponentInParent<Flower>();
+                
+                flower?.AddTemperature(temperatureIncreasePoints);
+            }   
+            
             Vector3 end = hit.collider
                 ? (Vector3)hit.point
                 : (Vector3)(origin + dir * maxDistance);
