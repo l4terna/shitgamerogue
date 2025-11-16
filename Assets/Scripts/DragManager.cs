@@ -54,8 +54,18 @@ public class DragManager : MonoBehaviour
         if (hitCollider)
         {
             _currentDraggable = hitCollider.GetComponent<IDraggable>();
-            _currentDraggable?.OnDragStart(origin);
+            
+            if (_currentDraggable != null)
+            {
+                _currentDraggable.DragCancelled += OnDragCancelled;
+                _currentDraggable.OnDragStart(origin);
+            }
         }
+    }
+
+    private void OnDragCancelled(IDraggable obj)
+    {
+        if (_currentDraggable == obj) EndDrag();
     }
 
     private Vector2 GetScreenWorldPos()
